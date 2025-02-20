@@ -146,6 +146,7 @@ class Nmap:
             raise ValueError( f"[{MODULE_NAME}] modules Docker image-name can not be empty or 'None'!" )
         
         
+        print( f"[{ MODULE_NAME} ] Beginning a scan with command: nmap", command )
         self.logs += containers.run_container(
             image_name = self.image_name,
             image_path = self.image_path,
@@ -153,6 +154,5 @@ class Nmap:
             
             debug = False
         )
-        
         
         return True
