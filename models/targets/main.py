@@ -1,5 +1,33 @@
 import database.main as database
-import models.targets.queries as targets_queries
+
+
+class Targets:
+    create_targets_table = \
+    """CREATE TABLE IF NOT EXISTS Targets (
+
+        id   INTEGER   PRIMARY KEY AUTOINCREMENT,
+        host TEXT      NOT NULL --
+
+    );
+    """
+
+    insert_into_targets = """
+        INSERT INTO Targets (
+        
+            host
+
+        ) 
+        VALUES (?);
+    """
+
+    get_target_by_host = """
+        SELECT * FROM Targets WHERE host = ?;
+    """
+
+    get_targets = """
+        SELECT * FROM Targets;
+    """
+
 
 
 def create_target_if_doesnt_exist( target : str ) -> int:
@@ -21,7 +49,7 @@ def create_target_if_doesnt_exist( target : str ) -> int:
         
         # Try to find target from db
         result = database.query_database(
-            targets_queries.get_target_by_host,
+            Targets.get_target_by_host,
             (target,)
         )
         
@@ -32,13 +60,13 @@ def create_target_if_doesnt_exist( target : str ) -> int:
             
         # Target doesn't exist, create a new one in db
         database.insert_data(
-            targets_queries.insert_into_targets,
+            Targets.insert_into_targets,
             (target,)
         )
         
         # Try to find target from db
         result = database.query_database(
-            targets_queries.get_target_by_host,
+            Targets.get_target_by_host,
             (target,)
         )
         

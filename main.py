@@ -8,12 +8,10 @@ import sys
 import database.main as database
 
 # importing of tooling modules
+from models.nmap.main import Nmap
 
-from models.nmap    import main    as nmap
-from models.nmap    import queries as nmap_queries
-
-from models.targets import main    as targets
-from models.targets import queries as targets_queries
+from models.targets.main import Targets
+import models.targets.main as targets 
 
 
 #
@@ -24,8 +22,8 @@ def main( target : str ):
     #   Prepare database
     #
     tables = {
-        "Nmap"     : nmap_queries.create_nmap_table,
-        "Targets"  : targets_queries.create_targets_table
+        "Nmap"     : Nmap.create_nmap_table,
+        "Targets"  : Targets.create_targets_table
     }
     
     database.initialize_db()
@@ -42,7 +40,7 @@ def main( target : str ):
     target_id = targets.create_target_if_doesnt_exist( target )
     
     # Prepare the can object & run the can
-    port_scan = nmap.Nmap( target_id )
+    port_scan = Nmap( target_id )
     port_scan.run( f"{target}" )
 
     # Parse results
@@ -50,7 +48,7 @@ def main( target : str ):
     
     # Store results
     database.insert_data(
-        nmap_queries.insert_into_nmap,
+        Nmap.insert_into_nmap,
         ports
     )
     
@@ -58,7 +56,7 @@ def main( target : str ):
     #   Check results
     #
     result = database.query_database(
-        nmap_queries.get_nmap_results_of_host,
+        Nmap.get_nmap_results_of_host,
         (target,)
     )
 
