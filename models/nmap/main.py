@@ -56,11 +56,10 @@ class Nmap:
         WHERE Targets.host = ?;
     """
 
-
     def __str__( self ):
         return f"[{MODULE_NAME} SCAN OBJECT] Timestamp: {self.timestamp}"
     
-    def __init__( self, target_id : int, image_name : str = "nmap-module", image_path : str = "./models/nmap/Dockerfile"):
+    def __init__( self, target_id : int, image_name : str = "nmap-module", image_path : str = "./models/nmap/"):
         self.logs      : str = ""
         self.target_id : int = target_id
         self.timestamp : int = time.time()
@@ -114,7 +113,7 @@ class Nmap:
             if output_line == [""]:
                 continue
 
-            port    = output_line[ 0 ]
+            port    = output_line[ 0 ].split("/")[ 0 ]
             status  = output_line[ 1 ]
             service = output_line[ 2 ]
 
@@ -146,7 +145,7 @@ class Nmap:
             raise ValueError( f"[{MODULE_NAME}] modules Docker image-name can not be empty or 'None'!" )
         
         
-        print( f"[{ MODULE_NAME} ] Beginning a scan with command: nmap", command )
+        print( f"[{ MODULE_NAME}] Beginning a scan with command: nmap", command )
         self.logs += containers.run_container(
             image_name = self.image_name,
             image_path = self.image_path,

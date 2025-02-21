@@ -27,7 +27,8 @@ def build_image( dockerfile_path : str, docker_image_name : str ) -> bool:
     #   Build the container
     #
     try:
-        
+        print( "debug:", dockerfile_path )
+         
         client.images.build(
             path = dockerfile_path, 
             tag  = docker_image_name
@@ -66,7 +67,7 @@ def image_exists( image_name ) -> bool:
     return True
 
 
-def run_container( image_name : str, command : str = "", image_path : str = "./", debug : bool = False ):
+def run_container( image_name : str, command : str = "", image_path : str = "./", debug : bool = True ):
     """
     Start & run a specified container. In case it doesn't exist, try to build it.
 
@@ -104,8 +105,9 @@ def run_container( image_name : str, command : str = "", image_path : str = "./"
             line = log.decode("utf-8").strip()
             output += line + "\n"
             
-        if debug: 
-            print( "[CONTAINERS] Debug:", output )
+            
+        #if debug: 
+        print( "[CONTAINERS] Debug:", output )
     
     except Exception as e:
         print(f"[CONTAINERS] [!!!] Error running { image_name }: {e}")

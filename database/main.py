@@ -50,6 +50,7 @@ def create_tables( tables : dict ) -> bool:
             cursor.execute( tables[table_name] )
             print( "[DATABASE] [+] Table: ", table_name, "created" )           
 
+        print( "[DATABASE] Ready." )
         CONNECTION.commit()
         cursor.close()
 
