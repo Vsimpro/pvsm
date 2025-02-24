@@ -36,3 +36,20 @@ python3 main.py -t <TARGET_IP>
 
 ## Further explanation & thoughts.
 
+The goal is to offer a better 'framework', 'system', or a 'library' for automation of cybersecurity tooling, than just using simple bash & powershell. While using aformentioned scripts & storing inputs and outputs into folders & files can be simple & easy, in the long run creating complex automation and/or chains of tooling this way can get messy and worksome. 
+
+Installing & maintaining the tools and system needed can be tackled with Docker, where only a few key dependencies have to be installed to run all the needed tools on all the needed machines. 
+
+This project is a Demo of this idea. The structure is as follows:
+
+![alt text](img/image.png)
+
+The basic idea is to run the tools inside a docker container, parse the output, and store them into a database. Each tool has an Object, such as `class Nmap:` which represents one run/output of the scan. It's member functions are used to run, parse, and handle the data coming in and out, and it must include the required SQL queries to maintain the database.
+
+## Demo
+
+One toolchain demoed here is a port scan -> content enumeration tool. First we must scan the host/target for with Nmap to find open ports, then determine which are populated by a webserver, and do content discovery on those.
+
+The flow of information would look a bit like this.
+
+![alt text](img/info_flow.png)
