@@ -16,6 +16,7 @@ class Feroxbuster:
     """CREATE TABLE IF NOT EXISTS Feroxbuster(
         
         id            INTEGER PRIMARY KEY AUTOINCREMENT,
+        host          TEXT      NOT NULL, --
         target_id     INTEGER   NOT NULL, --
         http_response TEXT      NOT NULL, --
         method        TEXT      NOT NULL, --
@@ -33,6 +34,7 @@ class Feroxbuster:
     insert_into_feroxbuster = """
     INSERT INTO Feroxbuster (
 
+        host,
         http_response,
         method,
         lines,
@@ -43,16 +45,42 @@ class Feroxbuster:
         timestamp
 
     ) 
-    VALUES (?,?,?,?,?,?,?,?);
+    VALUES (?,?,?,?,?,?,?,?,?);
     """
 
-    get_feroxbuster_results_of_host = """
+    get_feroxbuster_results_of_targethost = """
         SELECT *
         FROM   Feroxbuster
         INNER JOIN Targets
         ON Feroxbuster.target_id = Targets.id
 
         WHERE Targets.host = ?;
+    """
+    
+    get_latest_feroxbuster_results_of_targethost = """
+        SELECT *
+        FROM   Feroxbuster as F
+               INNER JOIN Targets as T
+               ON F.target_id = T.id,
+               (SELECT DISTINCT timestamp FROM Feroxbuster ORDER BY timestamp DESC LIMIT 1) Stamps
+        
+        WHERE Stamps.timestamp = F.timestamp
+            AND
+              T.host = ?
+        ;
+    """
+    
+    get_latest_feroxbuster_results_of_host = """
+        SELECT *
+        FROM   Feroxbuster as F
+               INNER JOIN Targets as T
+               ON F.target_id = T.id,
+               (SELECT DISTINCT timestamp FROM Feroxbuster ORDER BY timestamp DESC LIMIT 1) Stamps
+        
+        WHERE Stamps.timestamp = F.timestamp
+            AND
+              F.host = ?
+        ;
     """
     
     def __str__( self ):
@@ -65,6 +93,8 @@ class Feroxbuster:
         
         self.image_name = image_name
         self.image_path = image_path
+        
+        self.target_host = ""
         
         
     # TODO: Redo this in a better manner
@@ -105,9 +135,12 @@ class Feroxbuster:
             if line == "":
                 continue
                 
+            print(f"\\\\", line)
             if "=>" in line:
                 line = line.split("=>")[0]
-                
+            
+            normalized_line.append( self.target_host )
+            
             for result in line.split(" "):
                 
                 if result == "":
@@ -136,9 +169,12 @@ class Feroxbuster:
             boolean: status of success
         """
         global MODULE_NAME
+        
+        # Bad way of parsing host + port
+        self.target_host = [token for token in command.split(" ") if "://" in token][0].split("://")[1].split("/")[0]
 
         # Tweak the command        
-        command += " --quiet --rate-limit=50"
+        command += " --quiet"
         if ":443" not in command:
             command += " --insecure"
         

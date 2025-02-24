@@ -55,6 +55,19 @@ class Nmap:
 
         WHERE Targets.host = ?;
     """
+    
+    get_latest_nmap_results_of_host = """
+        SELECT T.host, N.port, N.status, N.service, N.timestamp 
+        
+        FROM Nmap as N
+            JOIN Targets as T ON N.target_id = T.id,
+            (SELECT DISTINCT timestamp FROM Nmap ORDER BY timestamp DESC LIMIT 1) Stamps
+            
+        WHERE Stamps.timestamp = N.timestamp
+            AND
+              T.host = ?
+        ;
+    """
 
     def __str__( self ):
         return f"[{MODULE_NAME} SCAN OBJECT] Timestamp: {self.timestamp}"

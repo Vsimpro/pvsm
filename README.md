@@ -42,7 +42,7 @@ Installing & maintaining the tools and system needed can be tackled with Docker,
 
 This project is a Demo of this idea. The structure is as follows:
 
-![alt text](img/image.png)
+![alt text](img/structure.png)
 
 The basic idea is to run the tools inside a docker container, parse the output, and store them into a database. Each tool has an Object, such as `class Nmap:` which represents one run/output of the scan. It's member functions are used to run, parse, and handle the data coming in and out, and it must include the required SQL queries to maintain the database.
 
@@ -53,3 +53,5 @@ One toolchain demoed here is a port scan -> content enumeration tool. First we m
 The flow of information would look a bit like this.
 
 ![alt text](img/info_flow.png)
+
+See main.py to see how the architechture is used in this demo to achieve this flow!
